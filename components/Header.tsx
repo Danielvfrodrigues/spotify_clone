@@ -5,8 +5,12 @@ import { HiHome } from "react-icons/hi";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import { twMerge } from "tailwind-merge";
 import { useRouter } from "next/navigation";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { FaUserAlt } from "react-icons/fa";
+import { toast } from "react-hot-toast";
 
 import useAuthModal from "@/hooks/useAuthModal";
+import { useUser } from "@/hooks/useUser";
 
 import Button from "./Button";
 
@@ -21,8 +25,18 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
     const authModal = useAuthModal();
     const router = useRouter();
-    const handleLogout = () => {
-        // Handle logout in the future
+
+    const supabaseClient = useSupabaseClient();
+    const { user } = useUser();
+
+    const handleLogout = async () => {
+        const { error } = await supabaseClient.auth.signOut();
+        // TODO: Reset any playing sogns in the future
+        router.refresh();
+
+        if (error) {
+            toast.error(error.message);
+        }
     }
     return ( 
         <div
@@ -115,32 +129,48 @@ const Header: React.FC<HeaderProps> = ({
                         gap-x-4
                     "
                 >
-                    <>
+                    {user ? (
                         <div className="flex gap-x-4 items-center">
                             <Button
-                                onClick={authModal.onOpen}
-                                className="
-                                    bg-transparent
-                                    text-newutral-300
-                                    font-medium
-                                "
-                            >
-                                Sign up
+                                onClick={handleLogout}
+                                className="bg-white px-6 py-2">
+                                Logout
                             </Button>
-                        </div>
-                        <div>
                             <Button
-                                onClick={authModal.onOpen}
-                                className="
-                                    bg-white
-                                    px-6
-                                    py-2
-                                "
+                                onClick={() => router.push('/account')}
+                                className="bg-white px-3 py-3"
                             >
-                                Log in
+                                <FaUserAlt />
                             </Button>
                         </div>
-                    </>
+                    ) : (
+                        <>
+                            <div className="flex gap-x-4 items-center">
+                                <Button
+                                    onClick={authModal.onOpen}
+                                    className="
+                                        bg-transparent
+                                        text-newutral-300
+                                        font-medium
+                                    "
+                                >
+                                    Sign up
+                                </Button>
+                            </div>
+                            <div>
+                                <Button
+                                    onClick={authModal.onOpen}
+                                    className="
+                                        bg-white
+                                        px-6
+                                        py-2
+                                    "
+                                >
+                                    Log in
+                                </Button>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
             {children}

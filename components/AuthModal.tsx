@@ -38,7 +38,7 @@ const AuthModal = () => {
         >
             <Auth 
                 theme="dark"
-                magicLink={true}
+                magicLink
                 providers={["github"]}
                 supabaseClient={supabaseClient}
                 appearance={{
