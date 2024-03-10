@@ -1,4 +1,4 @@
-"use-client"
+"use client"
 
 import uniqid from 'uniqid';
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";

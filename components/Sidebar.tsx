@@ -5,31 +5,37 @@ import { useMemo } from "react";
 import { BiSearch } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
 
+import { Song } from "@/types";
+
 import Box from "./Box";
 import SidebarItem from "./SidebarItem";
 import Library from "./Library";
 
 interface SidebarProps {
     children: React.ReactNode;
+    songs: Song[];
 }
 
-const Sidebar: React.FC<SidebarProps> = ({children}) => {
+const Sidebar: React.FC<SidebarProps> = ({
+    children,
+    songs
+}) => {
 
-    const pathName = usePathname();
+    const pathname = usePathname();
     const routes = useMemo(() => [
         {
             icon: HiHome,
             label: 'Home',
-            active: pathName === '/',
+            active: pathname === '/',
             href: '/'
         },
         {
             icon: BiSearch,
             label: 'Search',
-            active: pathName === '/search',
-            href: '/search'
+            href: '/search',
+            active: pathname === '/search'
         },
-    ], [pathName]);
+    ], [pathname]);
 
     return ( 
         <div className="flex h-full">
@@ -64,7 +70,7 @@ const Sidebar: React.FC<SidebarProps> = ({children}) => {
                     </div>
                 </Box>
                 <Box className="overflow-y-auto h-full">
-                    <Library />
+                    <Library songs={songs}/>
                 </Box>
             </div>
             <main className="h-full flex-1 overflow-y-auto py-2">
